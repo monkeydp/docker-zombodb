@@ -18,4 +18,4 @@ INSERT INTO "public"."products" VALUES (nextval('hibernate_sequence'), '灭火�
 CREATE INDEX idxproducts
 ON products
 USING zombodb ((products.*))
-WITH (url='http://elastic:changeme@192.168.3.222:9200/');
+WITH (url='http://elastic:changeme@192.168.x.x:9200/');
