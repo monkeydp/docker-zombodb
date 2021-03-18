@@ -5,8 +5,7 @@ import io.swagger.annotations.ApiOperation
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -20,18 +19,17 @@ import javax.persistence.Table
 @Entity
 @Table(name = "products")
 class Product(
-        @Id
-        @GeneratedValue
-        val id: Long,
         var name: String,
-        var shortSummary: String,
-        var longDescription: String,
-        var price: Int,
-        var inventory_count: Int,
-        var discontinued: Boolean,
-        val availability_date: Date,
+        var shortSummary: String = "<简介>",
+        var longDescription: String = "<描述>",
+        var price: Int = 0,
+        var inventory_count: Int = 0,
+        var discontinued: Boolean = false,
+        val availability_date: Date = Date(),
 ) {
-    var score: String? = null
+    @Id
+    @GeneratedValue
+    val id: Long = -1
 }
 
 @Repository
@@ -45,17 +43,42 @@ interface ProductRepo : JpaRepository<Product, Long> {
 
 @Api(tags = ["产品"])
 @RestController
+@RequestMapping("products")
 class ProductController(
         private val repo: ProductRepo,
 ) {
     @ApiOperation("产品列表")
-    @PostMapping("list")
+    @GetMapping
     fun list(form: ListForm) =
+            repo.findAllByName(form.name)
+
+    class ListForm(val name: String)
+
+    @ApiOperation("产品创建")
+    @PostMapping
+    fun create(@RequestBody form: CreateForm) =
+            repo.save(Product(form.name))
+
+    class CreateForm(val name: String)
+
+    @ApiOperation("产品编辑")
+    @PutMapping
+    fun edit(@RequestBody form: EditForm) =
             form.run {
-                repo.findAllByName(name)
+                repo.findById(id).get()
+                        .also { it.name = name }
+                        .run(repo::save)
             }
 
-    class ListForm(
+    class EditForm(
+            val id: Long,
             val name: String,
     )
+
+    @ApiOperation("产品删除")
+    @DeleteMapping
+    fun delete(@RequestBody form: DeleteForm) =
+            repo.deleteById(form.id)
+
+    class DeleteForm(val id: Long)
 }

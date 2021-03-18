@@ -32,6 +32,8 @@ dependencies {
         api("com.integralblue:log4jdbc-spring-boot-starter:1.0.2")
     }
 
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.4")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         testImplementation(kotlin("test-junit5"))
