@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: postgres
+    password: postgres
+  flyway:
+    locations: classpath:sql
+logging:
+  level:
+    com.example.spring.zombodb: info
+    jdbc:
+      sqlonly: fatal
+      resultsettable: info
+      sqltiming: info
+      audit: fatal
+      resultset: fatal
+      connection: fatal
+log4jdbc:
+  dump:
+    sql:
+      addsemicolon: true
+      maxlinelength: 0
+  trim:
+    sql:
+      extrablanklines: false
